@@ -7,6 +7,9 @@ You can specify a directory or it automaticly takes the '''$Home/.ssh''' directo
 
 `python ./main.py [folder]`
 
-- [ ] Add URL
-- [ ] Add Port
+- [X] Add Server url
+- [X] Add Port
+- [X] Add Username
+- [ ] Add better output imagename support
+- [ ] Add output folder support
 - [ ] Add CA support
