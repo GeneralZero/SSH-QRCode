@@ -29,6 +29,16 @@ def main(*args):
 		"--optimize", type=int, help="Optimize the data by looking for chunks "
 		"of at least this many characters that could use a more efficient "
 		"encoding method. Use 0 to turn off chunk optimization.")
+	parser.add_option(
+		"--server", help="Specify the server that you want to conect to"
+		"for example generalzero.org this can also support usernames ex."
+		"root@generalzero.org")
+	parser.add_option(
+		"--username", help="Specify the username that will be used to login"
+		"to the server ex. root")
+	parser.add_option(
+		"--port", help="Specify the port that will be used to connec the code to the"
+		"server ex. 22")
 	opts, args = parser.parse_args(list(args))
 
 	if opts.factory:
@@ -40,6 +50,20 @@ def main(*args):
 		image_factory = getattr(imp, name)
 	else:
 		image_factory = None
+		
+	if opts.server:
+		if opts.server.find('@'):
+			username, server = opts.server.split('@')
+		else:
+			server = opts.server
+	
+	if opts.username:
+		username = opts.username
+		
+	if opts.port:
+		port = opts.port
+	else:
+		port = 22
 
 	#Get folders for public ssh keys
 	if args:
@@ -51,13 +75,20 @@ def main(*args):
 
 	for keys in public_keys:
 		key_data = open(folder_name + keys)
+		
+		data = [server, username, port]
+		data = ['' if v is None else v for v in data]
+		
+		#Makes a comma seperated value of key,server,username,port
 		if opts.optimize is None:
-			qr.add_data(key_data.read())
+			qr.add_data(key_data.read() + ''.join(["," + x for x in data]))
 		else:
-			qr.add_data(key_data.read(), optimize=opts.optimize)
-
+			qr.add_data(key_data.read() + ''.join(["," + x for x in data]), optimize=opts.optimize)
+		
+		#Compiles the QR code
 		qr.make()
-
+		
+		#Makes and seves the file
 		img = qr.make_image(image_factory=image_factory)
 		img.save(keys + ".png")
 
