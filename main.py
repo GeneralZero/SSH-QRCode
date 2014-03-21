@@ -76,14 +76,14 @@ def main(*args):
 	for keys in public_keys:
 		key_data = open(folder_name + keys)
 		
-		data = [server, username, port]
+		data = [username, server, port]
 		data = ['' if v is None else v for v in data]
 		
 		#Makes a comma seperated value of key,server,username,port
 		if opts.optimize is None:
-			qr.add_data(key_data.read() + ''.join(["," + x for x in data]))
+			qr.add_data('ssh://' username + ":" + key_data.read() + '@' + server)
 		else:
-			qr.add_data(key_data.read() + ''.join(["," + x for x in data]), optimize=opts.optimize)
+			qr.add_data('ssh://' username + ":" + key_data.read() + '@' + server, optimize=opts.optimize)
 		
 		#Compiles the QR code
 		qr.make()
